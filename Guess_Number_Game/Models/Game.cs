@@ -122,27 +122,59 @@ namespace GuessNumberGame.Models
             Console.WriteLine($"  Samwuxarod, cdebis raodenoba amoiwura. Swori ricxvi iyo: {Secret}.");
         }
 
-        public int CalculateScore() // ქულის გამოთვლა
+        public int CalculateScore()
         {
+            // გამოითვლება ბაზური ქულა: 1000-ით ვმართავთ და ვყოფთ ვალიდურ დიაპაზონზე (Max - Min + 1),
+            // შემდეგ ვკვეცავთ შედეგს მაქსიმალურ დაშვებულ მცდელობებთან (MaxAttempts + 1).
+            // მიზანი — დიაპაზონის ზომა და მაქსიმალური მცდელობები იქონიონ გავლენა საწყის ქულაზე.
             double baseScore = 1000.0 / (Max - Min + 1) * (MaxAttempts + 1);
+
+            // მცდელობის ფაქტორი: რაც უფრო ცოტა მცდელობა დარჩა (ვინარჩუნებთ AttemptsUsed-ს), მით მეტი ფაკტორი.
+            // (MaxAttempts - AttemptsUsed + 1) / (double)MaxAttempts — ნორმალიზებული მნიშვნელობა.
+            // Math.Max(0.1, ...) — გამორიცხავს ძალიან მცირე ან ნეგატიურ ხაზს; მინიმუმ 0.1 ჩადგება.
             double attemptFactor = Math.Max(0.1, (MaxAttempts - AttemptsUsed + 1) / (double)MaxAttempts);
+
+            // დროის ფაქტორი: გამოიყენება Stopwatch-ის დრო წამებში.
+            // 60.0 / (_stopwatch.Elapsed.TotalSeconds + 1) — რაც უფრო სწრაფად მოხდა, მით დიდი ფაქტორი.
+            // Math.Max(0.1, ...) — ისევ მინიმალური ზღვარი 0.1, რომ დრო არ გაანადგუროს ქულა უკუგდებით.
             double timeFactor = Math.Max(0.1, 60.0 / (_stopwatch.Elapsed.TotalSeconds + 1));
+
+            // საბოლოო ქულა: ბაზური ქულა * მცდელობის ფაქტორი * დროის ფაქტორი * (თუ გვაქვს "hot/cold" მინიშნებები, წილი +5%).
+            // Math.Round ამრგვალებს double-ს; (int) კოლოფავს მთელ მნიშვნელობად.
             int score = (int)Math.Round(baseScore * attemptFactor * timeFactor * (_hotColdHints ? 1.05 : 1.0));
+
+            // ვუკონტროლებთ რომ დაბრუნებული ქულა არასოდეს იყოს უარყოფითი — თუ გამოდის უარყოფითი, ვაბრუნებთ 0-ს.
             return Math.Max(0, score);
         }
 
+
         private static string ReadOption(string[] allowed, string def)
         {
+            // ვაცხადებთ ადგილობრივ ცვლადს 'line' და ვკითხულობთ მომხმარებლის შეყვანას კონსოლიდან.
             var line = Console.ReadLine();
+
+            // თუ მომხმარებლის შეყვანა არის null, ფარული (whitespace) ან სულ ਖალი, დავაბრუნოთ ნაგულისხმევი მნიშვნელობა 'def'.
             if (string.IsNullOrWhiteSpace(line)) return def;
+
+            // ვამოწმებთ: თუ შეყვანილი სტრინგი მცირე/დიდი სიმბოლოების ბალანსს მოწმდება trim-ით,
+            // და ის შედის 'allowed' მასივში, მაშინ დავბრუნოთ ავთენტური (trim-ებული) შეყვანა,
+            // წინააღმდეგ შემთხვევაში დავბრუნოთ ნაგულისხმევი 'def'.
             return allowed.Contains(line.Trim()) ? line.Trim() : def;
         }
 
+
         private static int ReadInt(string msg, int def)
         {
+            // ბეჭდავს კონსოლზე შეტყობინებას, რომელიც ეუბნება მომხმარებელს რა შეიყვანოს (მაგ., "შეიყვანეთ რიცხვი: ").
             Console.Write(msg);
+
+            // კითხულობს მთელი ხაზის შეყვანას კონსოლიდან და აბრუნებს მას როგორც string.
             var input = Console.ReadLine();
+
+            // ცდილობს გადაქცევას int ტიპში: თუ წარმატებულია, აბრუნებს გადაკონვერტირებულ მნიშვნელობას (value),
+            // წინააღმდეგ შემთხვევაში (თუ TryParse დააბრუნებს false) აბრუნებს ნაგულისხმევ მნიშვნელობას def.
             return int.TryParse(input, out int value) ? value : def;
         }
+
     }
 }
