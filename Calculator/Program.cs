@@ -17,6 +17,7 @@ bool continueProgram = true;
 
 while (continueProgram)
 {
+    Console.ForegroundColor = ConsoleColor.Cyan;
     // ეკრანის გასუფთავება ყოველი ახალ ჩარიცხვის დაწყებისას
     Console.Clear();
     Console.WriteLine(" === Konsoluiri kalkulatori === ");
