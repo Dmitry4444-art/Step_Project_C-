@@ -119,6 +119,7 @@ Console.ResetColor();
 
 // ფუნქცია GetNumber — რიცხვის წამოღება და ვალიდაცია
 static double GetNumber(string message)
+    //static - ფუნქცია პირდაპირ კლასის კონტექსტშია, არ საჭიროებს ობიექტის შექმნას
 {
     double number;
     while (true)
@@ -129,10 +130,13 @@ static double GetNumber(string message)
 
         // double.TryParse უზრუნველყოფს, რომ არ მოხდეს გამონაკლისი არასაკანონო ფორმატით შესვლის დროს
         if (double.TryParse(input, out number))
+            //double.TryParse(...) ცდილობს ტექსტური მნიშვნელობა (input) გადაიყვანოს რიცხვად (double).
+            //თუ ეს წარმატებით მოხდება(ანუ მომხმარებელმა მართლა რიცხვი ჩაწერა), მეთოდი აბრუნებს true, და
+            //გადაყვანილი რიცხვი ინახება number ცვლადში(ამისთვისაა out number).
             return number; // თუ დამტკიცებულია, ვაბრუნებთ რიცხს
 
 
-        // შეცდომის შეტყობინება — რიკვესტი ვალის შესახებ
+        // შეცდომის შეტყობინება — რეკვესტი ვაილის შესახებ
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine(" Shecdoma: gtxovt sheiyvanot swori ricxvi! ");
         Console.ResetColor();

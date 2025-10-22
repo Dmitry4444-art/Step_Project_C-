@@ -34,6 +34,8 @@ public class Calculator
     {
         if (b == 0)
             throw new DivideByZeroException("Nulze gayofa sheudzlebelia!");
+        //throw ქმნის სპეციალურ შეცდომას და აჩერებს მეთოდის შესრულებას
+        //DevideByZeroException არის სპეციალური ტიპის შეცდომა, რომელიც მიუთითებს ნულზე გაყოფის მცდელობაზე, ჩაშენებულია .NET-ში
         return a / b;
     }
 
